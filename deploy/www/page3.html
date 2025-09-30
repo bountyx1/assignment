@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Page 2 ()</title>
+</head>
+<body>
+<p>Not Vulnerable since prepared statement is used</p>
+<?php
+require __DIR__ . '/config.php';
+
+if (isset($_REQUEST['username'])) {
+    $username = $_REQUEST['username'];
+
+    // using prepared statement
+    $sql  = 'SELECT * FROM users WHERE username = :u LIMIT 1';
+
+    echo "<pre>Prepared SQL:\n" . htmlspecialchars($sql) . "</pre>";
+
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':u' => $username]);
+        $rows = $stmt->fetchAll();
+
+        if (!empty($rows)) {
+            $found = $rows[0]['username'];
+            echo "Logged in as " . htmlspecialchars($found);
+        } else {
+            echo "User not found";
+        }
+    } catch (Throwable $e) {
+        $error = $e->getMessage();
+        echo "<div style='color:red'>Error: " . htmlspecialchars($error) . "</div>";
+    }
+}
+?>
+
+<form method="post">
+    <input name="username" placeholder="username" required>
+    <button type="submit">Login</button>
+</form>
+
+</body>
+</html>

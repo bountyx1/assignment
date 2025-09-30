@@ -1,0 +1,2 @@
+# To parse html as php
+AddType application/x-httpd-php .php .html
